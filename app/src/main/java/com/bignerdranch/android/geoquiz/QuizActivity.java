@@ -106,7 +106,7 @@ public class QuizActivity extends AppCompatActivity {
                     mCurrentIndex = mQuestionBank.length-1;
                 else
                     mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
-                mIsCheater = false;
+                 mIsCheater = false;
                 updateQuestion();
             }
         });
