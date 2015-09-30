@@ -21,6 +21,7 @@ public class QuizActivity extends AppCompatActivity {
     private static final String KEY_INDEX = "index";
     private static final int REQUEST_CODE_CHEAT = 0;
     private static final String CHEAT_STATE = "isCheater";
+    private static final int LEN = 5;
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -28,6 +29,7 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mPrevButton;
     private Button mCheatButton;
     private TextView mQuestionTextView;
+    private boolean mIsCheater[] = new boolean[]{false, false, false, false, false};
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_oceans, true),
@@ -39,7 +41,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private int mCurrentIndex = 0;
 
-    private boolean mIsCheater;
+    //private boolean mIsCheater;
 
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
@@ -51,7 +53,7 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (mIsCheater) {
+        if (mIsCheater[mCurrentIndex]) {
             messageResId = R.string.judgment_toast;
         } else {
             if (userPressedTrue == answerIsTrue) {
@@ -93,21 +95,21 @@ public class QuizActivity extends AppCompatActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
-                mIsCheater = false;
-                updateQuestion();
+                    mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                    //mIsCheater = false;
+                    updateQuestion();
             }
         });
 
-        mNextButton = (ImageButton) findViewById(R.id.prev_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
+        mPrevButton = (ImageButton) findViewById(R.id.prev_button);
+        mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mCurrentIndex == 0)
                     mCurrentIndex = mQuestionBank.length-1;
                 else
                     mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
-                 mIsCheater = false;
+                 //mIsCheater = false;
                 updateQuestion();
             }
         });
@@ -124,7 +126,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            mIsCheater = savedInstanceState.getBoolean(CHEAT_STATE, false);
+            mIsCheater = savedInstanceState.getBooleanArray(CHEAT_STATE);
         }
 
         updateQuestion();
@@ -135,7 +137,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState() called");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
-        savedInstanceState.putBoolean(CHEAT_STATE, mIsCheater);
+        savedInstanceState.putBooleanArray(CHEAT_STATE, mIsCheater);
     }
 
     @Override
@@ -178,7 +180,7 @@ public class QuizActivity extends AppCompatActivity {
             if (data == null) {
                 return;
             }
-            mIsCheater = CheatActivity.wasAnswerShown(data);
+            mIsCheater[mCurrentIndex] = CheatActivity.wasAnswerShown(data);
         }
     }
 
